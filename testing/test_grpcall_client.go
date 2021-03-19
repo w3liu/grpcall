@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/karldoenitz/grpcall"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"grpcall"
 )
 
 func main() {
@@ -17,11 +17,11 @@ func main() {
 		panic(err.Error())
 	}
 
-	var handler = DefaultEventHandler{}
+	//var handler = DefaultEventHandler{}
 	var sendBody string
 
 	grpcEnter, err := grpcall.New(
-		grpcall.SetHookHandler(&handler),
+	//grpcall.SetHookHandler(&handler),
 	)
 	grpcEnter.Init()
 

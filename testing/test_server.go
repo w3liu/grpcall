@@ -11,10 +11,8 @@ import (
 	"sync"
 	"time"
 
+	pb "github.com/karldoenitz/grpcall/testing/helloworld"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-
-	pb "grpcall/testing/helloworld"
 )
 
 const (
@@ -42,6 +40,11 @@ type server struct{}
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Println("get client request name :" + in.Name)
 	return &pb.HelloReply{Message: "hehe main: Hello-" + in.Name}, nil
+}
+
+func (s *server) SayGirl(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
+	log.Println("get client request name :" + in.Name)
+	return &pb.HelloReply{Message: "hehe girl: Hello-" + in.Name}, nil
 }
 
 type serverStream struct{}
@@ -131,7 +134,7 @@ func main() {
 	pb.RegisterGreeterServer(s, srv)
 	pb.RegisterBidiStreamServiceServer(s, bidiStream)
 	pb.RegisterServerStreamServiceServer(s, servStream)
-	reflection.Register(s)
+	//reflection.Register(s)
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

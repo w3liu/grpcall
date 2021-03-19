@@ -165,7 +165,7 @@ func (d *DescSourceEntry) InitDescSource() error {
 func (d *DescSourceEntry) AysncNotifyDesc() {
 	go func() {
 		q := make(chan os.Signal, 1)
-		signal.Notify(q, syscall.SIGUSR1)
+		signal.Notify(q, syscall.SIGKILL)
 
 		for {
 			select {
