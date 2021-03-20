@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	descpb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/jhump/protoreflect/desc"
+	"github.com/jhump/protoreflect/desc/protoparse"
 	"github.com/jhump/protoreflect/dynamic"
 	"github.com/karldoenitz/grpcall"
 	"google.golang.org/grpc"
@@ -17,7 +18,8 @@ import (
 )
 
 func main() {
-	protoSet, err := newProtoSet("./helloworld.protoset")
+	protoSet, err := newProtoSet1("./helloworld.proto")
+	//protoSet, err := newProtoSet("./helloworld.protoset")
 	if err != nil {
 		panic(err)
 	}
@@ -64,8 +66,26 @@ func newProtoSet(fileName string) (*protoSet, error) {
 	return s, err
 }
 
-func parseFileDescriptorProto(fileName string) {
+func newProtoSet1(fileName string) (*protoSet, error) {
+	fds, err := parseProto(fileName)
+	if err != nil {
+		return nil, err
+	}
+	fdMap := make(map[string]*desc.FileDescriptor)
+	for _, fd := range fds {
+		fdMap[fd.GetName()] = fd
+		fd.GetServices()
+	}
+	s := &protoSet{
+		fdMap: fdMap,
+	}
+	return s, nil
+}
 
+func parseProto(fileName string) ([]*desc.FileDescriptor, error) {
+	p := protoparse.Parser{}
+	fds, err := p.ParseFiles("./helloworld.proto")
+	return fds, err
 }
 
 func (s *protoSet) resolve(protoMap map[string]*descpb.FileDescriptorProto, fileName string) (*desc.FileDescriptor, error) {
